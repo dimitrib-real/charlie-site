@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Les maths de Charlie</title>
+<style>
+    :root {
+      --ink: #16324f;
+      --muted: #65758b;
+      --paper: #fffdf8;
+      --coral: #ff5d8f;
+      --coral-dark: #d93b70;
+      --sun: #ffd166;
+      --blue: #6c5ce7;
+      --purple: #7c4dff;
+      --aqua: #36d1c4;
+      --aqua-dark: #1f9b8f;
+      --green: #2d9d78;
+      --red: #c9463d;
+      --shadow: 0 18px 48px rgba(25, 50, 74, .14);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(54, 209, 196, .5) 0 7%, transparent 24%),
+        radial-gradient(circle at 92% 18%, rgba(255, 216, 77, .55) 0 9%, transparent 27%),
+        radial-gradient(circle at 82% 88%, rgba(124, 77, 255, .28) 0 10%, transparent 30%),
+        linear-gradient(145deg, #e6fbf7 0%, #fff4dc 48%, #eef0ff 100%);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .app {
+      height: 100svh;
+      display: flex;
+      flex-direction: column;
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: max(10px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom));
+    }
+
+    header {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 2px 2px 10px;
+    }
+
+    .home-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 8px 13px; border-radius: 999px;
+      background: rgba(255, 255, 255, .75); border: 1px solid rgba(22, 50, 79, .1);
+      box-shadow: 0 5px 16px rgba(46, 37, 98, .08);
+      color: var(--ink); text-decoration: none; font-weight: 800; font-size: .85rem;
+    }
+    .home-link:active { transform: translateY(1px); }
+
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 1rem; font-weight: 850; letter-spacing: -.02em; }
+    .mark {
+      display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px;
+      color: white; font-weight: 900; font-size: 1.2rem;
+      background: linear-gradient(145deg, var(--aqua), #66e0d4);
+      box-shadow: 0 6px 0 rgba(31, 155, 143, .3); transform: rotate(-3deg);
+    }
+
+    main { flex: 1 1 auto; min-height: 0; display: flex; }
+
+    .panel {
+      position: relative; flex: 1 1 auto; min-height: 0; width: 100%;
+      display: flex; flex-direction: column;
+      padding: clamp(16px, 3.4vmin, 34px);
+      border: 3px solid rgba(255, 255, 255, .86); border-radius: 28px;
+      background: rgba(255, 255, 255, .9); box-shadow: var(--shadow); overflow: hidden;
+    }
+    .panel::before {
+      content: ""; position: absolute; width: 150px; height: 150px; border-radius: 38px;
+      background: rgba(255, 209, 102, .34); top: -82px; right: -60px; transform: rotate(22deg);
+    }
+    .panel::after {
+      content: ""; position: absolute; width: 130px; height: 130px; border-radius: 50%;
+      background: rgba(124, 77, 255, .12); left: -64px; bottom: -58px;
+    }
+
+    .screen {
+      position: relative; z-index: 1; flex: 1 1 auto; min-height: 0; width: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    }
+    .screen.scrolly { justify-content: flex-start; overflow-y: auto; }
+    .hidden { display: none !important; }
+
+    h1 {
+      margin: 0; font-size: clamp(1.7rem, 6.6vmin, 3rem); line-height: 1.04; letter-spacing: -.04em; text-wrap: balance;
+      background: linear-gradient(100deg, #1f9b8f, var(--aqua) 45%, var(--purple));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .eyebrow { margin: 0 0 14px; color: var(--muted); font-weight: 800; font-size: .9rem; text-transform: uppercase; letter-spacing: .07em; }
+    .intro-copy { max-width: 440px; margin: 12px auto 20px; font-size: clamp(1rem, 3.6vmin, 1.15rem); line-height: 1.45; color: var(--muted); }
+
+    .primary, .secondary {
+      width: min(100%, 360px); min-height: 54px; border: 0; border-radius: 16px; font-weight: 850; cursor: pointer;
+    }
+    .primary {
+      color: white; background: linear-gradient(110deg, var(--aqua-dark), var(--aqua));
+      box-shadow: 0 7px 0 rgba(31, 155, 143, .55); transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .primary:active { transform: translateY(4px); box-shadow: 0 3px 0 rgba(31, 155, 143, .55); }
+    .secondary { color: var(--ink); background: #eef3f7; margin-top: 12px; }
+    .link-btn { border: 0; background: none; color: var(--aqua-dark); font-weight: 800; cursor: pointer; padding: 8px 10px; border-radius: 12px; margin-top: 8px; }
+
+    /* section menu */
+    .msec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; max-width: 520px; margin: 6px auto 0; }
+    .msec-tile {
+      position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+      padding: 20px 18px 18px; border-radius: 24px; background: rgba(255, 255, 255, .92); border: 3px solid #fff;
+      box-shadow: 0 14px 34px rgba(25, 50, 74, .12); text-align: left; cursor: pointer;
+      color: var(--ink); font: inherit; transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .msec-tile:not(.soon):hover { transform: translateY(-4px); box-shadow: 0 20px 44px rgba(25, 50, 74, .2); }
+    .msec-tile:not(.soon):active { transform: translateY(-1px); }
+    .msec-icon {
+      display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 6px; border-radius: 16px;
+      font-size: 1.7rem; background: var(--tile); box-shadow: 0 6px 0 rgba(25, 50, 74, .1);
+    }
+    .msec-name { font-size: 1.2rem; font-weight: 850; letter-spacing: -.02em; }
+    .msec-sub { color: var(--muted); font-weight: 750; font-size: .9rem; }
+    .msec-cta { margin-top: 4px; font-weight: 850; color: var(--tile); }
+    .msec-badge {
+      position: absolute; top: 12px; right: 12px; padding: 4px 10px; border-radius: 999px;
+      background: #eef3f7; color: var(--muted); font-weight: 800; font-size: .68rem; text-transform: uppercase; letter-spacing: .05em;
+    }
+    .msec-tile.soon { opacity: .55; cursor: default; }
+    .msec-tile.soon .msec-icon { filter: grayscale(.25); }
+
+    /* number chooser */
+    .num-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(66px, 1fr));
+      gap: clamp(8px, 1.8vmin, 14px); width: 100%; max-width: 460px; margin: 4px auto 0;
+    }
+    .num-btn {
+      min-height: clamp(58px, 11vmin, 78px); border-radius: 18px; border: 3px solid #fff;
+      background: rgba(255, 255, 255, .92); box-shadow: 0 8px 20px rgba(25, 50, 74, .1);
+      font-size: clamp(1.4rem, 5vmin, 2rem); font-weight: 900; color: var(--ink); cursor: pointer;
+    }
+    .num-btn:active { transform: translateY(2px); }
+
+    /* quiz */
+    #quizScreen { justify-content: space-between; }
+    .quiz-progress { flex: 0 0 auto; }
+    .eq-wrap { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; width: 100%; }
+    .equation {
+      display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .28em;
+      font-size: clamp(2rem, 8.5vmin, 3.8rem); font-weight: 900; letter-spacing: -.02em;
+    }
+    .eq-box {
+      display: inline-grid; place-items: center; min-width: 1.7em; min-height: 1.35em; padding: .04em .2em;
+      border-radius: 14px; background: #f1eefc; border: 3px dashed rgba(124, 77, 255, .45); color: var(--purple);
+    }
+    .eq-box.empty { color: #b9a9ee; }
+    .eq-box.ok { background: #dff8ec; border: 3px solid var(--green); color: var(--green); }
+    .eq-box.bad { background: #ffe5ea; border: 3px solid var(--red); color: var(--red); }
+
+    .pad {
+      flex: 0 0 auto; display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: clamp(8px, 1.7vmin, 12px); width: min(100%, 330px); margin: 8px auto 0;
+    }
+    .pad-btn {
+      min-height: clamp(46px, 8.6vmin, 64px); border-radius: 16px; border: 2px solid rgba(22, 50, 79, .08);
+      background: #fff; box-shadow: 0 4px 0 rgba(22, 50, 79, .1); color: var(--ink);
+      font-size: clamp(1.2rem, 4.6vmin, 1.6rem); font-weight: 850; cursor: pointer;
+    }
+    .pad-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(22, 50, 79, .1); }
+    .pad-btn.del { background: #fdeef0; color: var(--coral-dark); }
+    .pad-btn.go { background: linear-gradient(110deg, var(--aqua-dark), var(--aqua)); color: #fff; border-color: transparent; box-shadow: 0 4px 0 rgba(31, 155, 143, .55); }
+
+    /* results */
+    #resultsScreen { justify-content: flex-start; }
+    .trophy { display: block; margin: 4px auto 6px; font-size: clamp(3.2rem, 12vmin, 5rem); animation: trophyPop .75s cubic-bezier(.2,.9,.3,1.35) both; }
+    .result-score { margin: 4px auto 0; color: var(--aqua-dark); font-size: clamp(1.5rem, 6.5vmin, 2.3rem); font-weight: 950; }
+    .err-block { flex: 1 1 auto; min-height: 0; width: min(100%, 520px); margin: 12px auto 8px; display: flex; flex-direction: column; }
+    .err-head { flex: 0 0 auto; margin: 0 0 10px; font-weight: 850; color: var(--ink); font-size: 1rem; }
+    .err-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 2px; }
+    .err-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+      padding: 9px 13px; border-radius: 14px; background: #ffeef1; border: 2px solid rgba(217, 59, 112, .18);
+    }
+    .err-eq { font-weight: 900; font-size: clamp(1.05rem, 3.6vmin, 1.3rem); color: var(--ink); }
+    .err-given { color: var(--coral-dark); font-weight: 800; font-size: .92rem; }
+    .result-actions { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 6px; }
+
+    .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    .confetti i {
+      position: absolute; top: -24px; left: var(--x); width: 10px; height: 20px; border-radius: 4px;
+      background: var(--c); animation: confettiFall var(--d) linear var(--delay) infinite;
+    }
+    @keyframes trophyPop { from { opacity: 0; transform: scale(.45) rotate(-16deg); } }
+    @keyframes confettiFall { to { transform: translateY(720px) rotate(700deg); } }
+
+    /* ---- reactions ---- */
+    .reaction-layer { position: absolute; inset: 0; z-index: 30; overflow: hidden; pointer-events: none; }
+    .creature { position: absolute; font-size: clamp(2.6rem, 11vmin, 5rem); filter: drop-shadow(0 8px 10px rgba(44,34,86,.18)); }
+    .creature.good-pop { animation: happyPop 1.6s cubic-bezier(.2,.85,.35,1) both; }
+    .creature.skunk-run { animation: skunkRun 1.7s ease-in-out both; }
+    .creature.puff { font-size: clamp(1.8rem, 8vmin, 3.4rem); animation: puffAway 1.5s ease-out both; }
+    .reaction-label {
+      position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%);
+      padding: 11px 20px; border: 4px solid #fff; border-radius: 999px; color: #fff; font-weight: 950;
+      white-space: nowrap; font-size: clamp(1.1rem, 5.5vmin, 1.9rem); box-shadow: 0 12px 28px rgba(63,40,140,.24);
+      z-index: 31; animation: labelPop 1.6s ease both;
+    }
+    .reaction-label.good { background: linear-gradient(110deg, var(--purple), var(--coral)); }
+    .reaction-label.bad { background: linear-gradient(110deg, #59616b, #8c6a55); }
+    @keyframes happyPop { 0% { opacity: 0; transform: translateY(130px) scale(.3) rotate(-18deg); } 35% { opacity: 1; transform: translateY(-14px) scale(1.1) rotate(8deg); } 75% { opacity: 1; transform: translateY(4px) scale(1) rotate(-4deg); } 100% { opacity: 0; transform: translateY(-120px) scale(.8) rotate(12deg); } }
+    @keyframes skunkRun { 0% { opacity: 0; transform: translateX(-130px) rotate(-8deg); } 20%, 75% { opacity: 1; } 45% { transform: translateX(20px) rotate(8deg); } 100% { opacity: 0; transform: translateX(170px) rotate(-5deg); } }
+    @keyframes puffAway { 0% { opacity: 0; transform: translate(0, 25px) scale(.4); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(-80px, -95px) scale(1.5) rotate(18deg); } }
+    @keyframes labelPop { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.35); } 25%, 75% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -80%) scale(.85); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .trophy, .confetti i, .creature, .reaction-label { animation: none !important; }
+      .primary:active, .pad-btn:active, .num-btn:active { transform: none; }
+    }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <a class="home-link" href="index.html">← Accueil</a>
+      <div class="brand"><span class="mark" aria-hidden="true">+</span> Mathématiques</div>
+      <span style="width:1px"></span>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="reaction-layer" id="reactionLayer" aria-hidden="true"></div>
+
+        <!-- section menu -->
+        <div class="screen" id="mathHome">
+          <p class="eyebrow">✨ Les maths de Charlie ✨</p>
+          <h1>Choisis un exercice</h1>
+          <p class="intro-copy">Deux ateliers pour t’entraîner. D’autres arriveront bientôt&nbsp;!</p>
+          <div class="msec-grid">
+            <button class="msec-tile" id="goComp" type="button" style="--tile:#36d1c4">
+              <span class="msec-icon" aria-hidden="true">🧩</span>
+              <span class="msec-name">Les compléments</span>
+              <span class="msec-sub">4 + ? = 8</span>
+              <span class="msec-cta">Jouer →</span>
+            </button>
+            <button class="msec-tile" id="goAdd" type="button" style="--tile:#ff8a4c">
+              <span class="msec-icon" aria-hidden="true">➕</span>
+              <span class="msec-name">L’addition</span>
+              <span class="msec-sub">7 + 3 = ?</span>
+              <span class="msec-cta">Jouer →</span>
+            </button>
+            <div class="msec-tile soon" style="--tile:#ff5d8f" aria-disabled="true">
+              <span class="msec-badge">Bientôt</span>
+              <span class="msec-icon" aria-hidden="true">➖</span>
+              <span class="msec-name">La soustraction</span>
+              <span class="msec-sub">8 − 3 = ?</span>
+            </div>
+            <div class="msec-tile soon" style="--tile:#7c4dff" aria-disabled="true">
+              <span class="msec-badge">Bientôt</span>
+              <span class="msec-icon" aria-hidden="true">✖️</span>
+              <span class="msec-name">Les tables</span>
+              <span class="msec-sub">Multiplication</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- setup: complements -->
+        <div class="screen scrolly hidden" id="setupComp">
+          <p class="eyebrow">🧩 Les compléments</p>
+          <h1>Compléments de… ?</h1>
+          <p class="intro-copy">Choisis un nombre. On cherche tous ses compléments, par exemple <strong>4 + ? = 8</strong>.</p>
+          <div class="num-grid" id="compChoices"></div>
+          <button class="link-btn" data-menu type="button">← Retour</button>
+        </div>
+
+        <!-- setup: addition -->
+        <div class="screen scrolly hidden" id="setupAdd">
+          <p class="eyebrow">➕ L’addition</p>
+          <h1>Additions avec… ?</h1>
+          <p class="intro-copy">Choisis un nombre de départ. On l’ajoute à 1, 2, 3… jusqu’à 10&nbsp;!</p>
+          <div class="num-grid" id="addChoices"></div>
+          <button class="link-btn" data-menu type="button">← Retour</button>
+        </div>
+
+        <!-- quiz -->
+        <div class="screen hidden" id="quizScreen">
+          <p class="eyebrow quiz-progress" id="quizProgress">Question 1 / 9</p>
+          <div class="eq-wrap">
+            <div class="equation">
+              <span id="eqPre"></span>
+              <span class="eq-box empty" id="eqBox">?</span>
+              <span id="eqPost"></span>
+            </div>
+          </div>
+          <div class="pad" id="pad"></div>
+        </div>
+
+        <!-- results -->
+        <div class="screen hidden" id="resultsScreen">
+          <div class="confetti" id="confetti" aria-hidden="true"></div>
+          <p class="eyebrow">Terminé !</p>
+          <span class="trophy" aria-hidden="true">🏆</span>
+          <p class="result-score" id="resultScore">0 / 0</p>
+          <p class="intro-copy" id="resultCopy"></p>
+          <div class="err-block hidden" id="errorBlock">
+            <p class="err-head" id="errorHead">Erreurs à revoir :</p>
+            <div class="err-list" id="errorList"></div>
+          </div>
+          <div class="result-actions">
+            <button class="primary" id="againBtn" type="button">Recommencer 🔄</button>
+            <button class="secondary" id="otherBtn" type="button">Choisir un autre nombre</button>
+            <button class="link-btn" data-menu type="button">← Menu des maths</button>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const screens = ["mathHome", "setupComp", "setupAdd", "quizScreen", "resultsScreen"];
+    function showOnly(id) { screens.forEach((s) => $(s).classList.toggle("hidden", s !== id)); }
+
+    const compTargets = [5, 6, 7, 8, 9, 10, 15, 20];
+    const addStarts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    let section = null;   // 'comp' | 'add'
+    let chosen = null;
+    let questions = [];
+    let qi = 0;
+    let input = "";
+    let errors = [];
+    let correctCount = 0;
+    let locked = false;
+    let advanceTimer;
+
+    function shuffle(a) {
+      const c = [...a];
+      for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; }
+      return c;
+    }
+
+    function buildComplements(n) {
+      const qs = [];
+      for (let a = 0; a <= n; a++) qs.push({ pre: `${a} +`, post: `= ${n}`, answer: n - a, full: `${a} + ${n - a} = ${n}` });
+      return shuffle(qs);
+    }
+    function buildAdditions(start) {
+      const qs = [];
+      for (let k = 1; k <= 10; k++) qs.push({ pre: `${start} + ${k} =`, post: "", answer: start + k, full: `${start} + ${k} = ${start + k}` });
+      return shuffle(qs);
+    }
+
+    function startQuiz(sec, n) {
+      section = sec; chosen = n;
+      questions = sec === "comp" ? buildComplements(n) : buildAdditions(n);
+      qi = 0; input = ""; errors = []; correctCount = 0; locked = false;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearTimeout(advanceTimer);
+      clearReaction();
+      locked = false; input = "";
+      const q = questions[qi];
+      $("eqPre").textContent = q.pre;
+      $("eqPost").textContent = q.post;
+      $("quizProgress").textContent = `Question ${qi + 1} / ${questions.length}`;
+      const box = $("eqBox");
+      box.classList.remove("ok", "bad");
+      updateBox();
+      showOnly("quizScreen");
+    }
+
+    function updateBox() {
+      const box = $("eqBox");
+      box.textContent = input === "" ? "?" : input;
+      box.classList.toggle("empty", input === "");
+    }
+
+    function tapDigit(d) { if (locked) return; if (input.length >= 2) return; input += d; updateBox(); }
+    function backspace() { if (locked) return; input = input.slice(0, -1); updateBox(); }
+
+    function submit() {
+      if (locked || input === "") return;
+      locked = true;
+      const q = questions[qi];
+      const given = parseInt(input, 10);
+      const ok = given === q.answer;
+      const box = $("eqBox");
+      box.classList.remove("empty");
+      box.textContent = input;
+      box.classList.add(ok ? "ok" : "bad");
+      if (ok) correctCount += 1; else errors.push({ full: q.full, given });
+      react(ok ? "good" : "bad", ok ? 2 : 1);
+      advanceTimer = setTimeout(() => {
+        qi += 1;
+        if (qi >= questions.length) showResults(); else showQuestion();
+      }, 1100);
+    }
+
+    function showResults() {
+      $("resultScore").textContent = `${correctCount} / ${questions.length}`;
+      $("resultCopy").textContent = errors.length
+        ? `${errors.length} erreur${errors.length > 1 ? "s" : ""} à revoir. Tu peux recommencer quand tu veux.`
+        : "Sans faute ! Bravo, championne ! 🎉";
+      const list = $("errorList");
+      if (errors.length) {
+        $("errorHead").textContent = `Erreur${errors.length > 1 ? "s" : ""} à revoir :`;
+        list.replaceChildren(...errors.map((e) => {
+          const row = document.createElement("div");
+          row.className = "err-row";
+          const eq = document.createElement("span");
+          eq.className = "err-eq";
+          eq.textContent = e.full;
+          const given = document.createElement("span");
+          given.className = "err-given";
+          given.textContent = `ta réponse : ${e.given}`;
+          row.append(eq, given);
+          return row;
+        }));
+        $("errorBlock").classList.remove("hidden");
+      } else {
+        list.replaceChildren();
+        $("errorBlock").classList.add("hidden");
+      }
+      makeConfetti();
+      showOnly("resultsScreen");
+      if (errors.length === 0) react("good", 8); else react("bad", errors.length);
+    }
+
+    function makeConfetti() {
+      const colors = ["#36d1c4", "#7c4dff", "#ff5d8f", "#ffd84d", "#ff8a4c"];
+      const pieces = Array.from({ length: 30 }, (_, i) => {
+        const piece = document.createElement("i");
+        piece.style.setProperty("--x", `${(i * 37) % 100}%`);
+        piece.style.setProperty("--c", colors[i % colors.length]);
+        piece.style.setProperty("--d", `${2.8 + (i % 5) * .35}s`);
+        piece.style.setProperty("--delay", `${-(i % 7) * .4}s`);
+        return piece;
+      });
+      $("confetti").replaceChildren(...pieces);
+    }
+
+    /* ---------- reactions ---------- */
+    let reactionTimer;
+    function addCreature(layer, emoji, cls, left, top, delay) {
+      const el = document.createElement("span");
+      el.className = "creature " + cls;
+      el.textContent = emoji;
+      el.style.left = left; el.style.top = top; el.style.animationDelay = delay || "0s";
+      layer.appendChild(el);
+    }
+    function clearReaction() {
+      clearTimeout(reactionTimer);
+      const layer = $("reactionLayer"); if (layer) layer.replaceChildren();
+    }
+    // kind "good": rainbows + unicorns (magnitude = how many); kind "bad": skunks (magnitude = number of errors)
+    function react(kind, magnitude) {
+      const layer = $("reactionLayer");
+      if (!layer) return;
+      clearReaction();
+      const label = document.createElement("strong");
+      if (kind === "good") {
+        label.className = "reaction-label good";
+        label.textContent = "Bravo ! 🌟";
+        const n = Math.max(1, Math.min(10, magnitude || 2));
+        for (let i = 0; i < n; i++) {
+          addCreature(layer, i % 2 ? "🌈" : "🦄", "good-pop", (5 + (i * 83) % 88) + "%", (6 + (i * 47) % 72) + "%", (i * 0.12) + "s");
+        }
+      } else {
+        label.className = "reaction-label bad";
+        label.textContent = magnitude > 1 ? "Oups… à revoir" : "Presque !";
+        const n = Math.max(1, Math.min(8, magnitude || 1));
+        for (let i = 0; i < n; i++) {
+          addCreature(layer, "🦨", "skunk-run", "-5%", (10 + (i * 61) % 74) + "%", (i * 0.16) + "s");
+        }
+        for (let i = 0; i < Math.min(3, n); i++) {
+          addCreature(layer, "💨", "puff", (18 + i * 28) + "%", (38 + (i * 17) % 50) + "%", (i * 0.2 + 0.1) + "s");
+        }
+      }
+      layer.appendChild(label);
+      reactionTimer = setTimeout(() => layer.replaceChildren(), 1900);
+    }
+
+    /* build the number choosers */
+    function makeChoices(container, values, sec) {
+      $(container).replaceChildren(...values.map((v) => {
+        const b = document.createElement("button");
+        b.className = "num-btn";
+        b.type = "button";
+        b.textContent = v;
+        b.addEventListener("click", () => startQuiz(sec, v));
+        return b;
+      }));
+    }
+
+    /* build the number pad */
+    function makePad() {
+      const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "⌫", "0", "✓"];
+      $("pad").replaceChildren(...keys.map((k) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = k;
+        if (k === "⌫") { b.className = "pad-btn del"; b.setAttribute("aria-label", "Effacer"); b.addEventListener("click", backspace); }
+        else if (k === "✓") { b.className = "pad-btn go"; b.setAttribute("aria-label", "Valider"); b.addEventListener("click", submit); }
+        else { b.className = "pad-btn"; b.addEventListener("click", () => tapDigit(k)); }
+        return b;
+      }));
+    }
+
+    /* wire up */
+    makeChoices("compChoices", compTargets, "comp");
+    makeChoices("addChoices", addStarts, "add");
+    makePad();
+    showOnly("mathHome");
+
+    $("goComp").addEventListener("click", () => showOnly("setupComp"));
+    $("goAdd").addEventListener("click", () => showOnly("setupAdd"));
+    document.querySelectorAll("[data-menu]").forEach((b) => b.addEventListener("click", () => showOnly("mathHome")));
+    $("againBtn").addEventListener("click", () => startQuiz(section, chosen));
+    $("otherBtn").addEventListener("click", () => showOnly(section === "comp" ? "setupComp" : "setupAdd"));
+
+    document.addEventListener("keydown", (e) => {
+      if ($("quizScreen").classList.contains("hidden")) return;
+      if (e.key >= "0" && e.key <= "9") { tapDigit(e.key); }
+      else if (e.key === "Backspace") { backspace(); }
+      else if (e.key === "Enter") { submit(); }
+    });
+  </script>
+
+</body>
+</html>

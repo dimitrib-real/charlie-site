@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mots éclair</title>
+<style>
+    :root {
+      --ink: #16324f;
+      --muted: #65758b;
+      --paper: #fffdf8;
+      --coral: #ff5d8f;
+      --coral-dark: #d93b70;
+      --sun: #ffd166;
+      --blue: #6c5ce7;
+      --purple: #7c4dff;
+      --aqua: #36d1c4;
+      --green: #2d9d78;
+      --red: #c9463d;
+      --shadow: 0 18px 48px rgba(25, 50, 74, .14);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(255, 216, 77, .8) 0 7%, transparent 24%),
+        radial-gradient(circle at 92% 18%, rgba(255, 93, 143, .35) 0 9%, transparent 27%),
+        radial-gradient(circle at 82% 88%, rgba(54, 209, 196, .35) 0 10%, transparent 30%),
+        linear-gradient(145deg, #efe9ff 0%, #fff4dc 48%, #e9fbff 100%);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .app {
+      height: 100svh;
+      display: flex;
+      flex-direction: column;
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: max(10px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom));
+    }
+
+    header {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 2px 2px 10px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .75);
+      border: 1px solid rgba(22, 50, 79, .1);
+      box-shadow: 0 5px 16px rgba(46, 37, 98, .08);
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: .85rem;
+    }
+    .home-link:active { transform: translateY(1px); }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 850;
+      letter-spacing: -.02em;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      color: white;
+      font-weight: 900;
+      background: linear-gradient(145deg, var(--purple), #a56eff);
+      box-shadow: 0 6px 0 rgba(73, 45, 164, .22);
+      transform: rotate(-3deg);
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(22, 50, 79, .1);
+      background: rgba(255, 255, 255, .75);
+      box-shadow: 0 5px 16px rgba(46, 37, 98, .08);
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .icon-btn:active { transform: translateY(1px); }
+
+    main { flex: 1 1 auto; min-height: 0; display: flex; }
+
+    .panel {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(16px, 3.4vmin, 34px);
+      border: 3px solid rgba(255, 255, 255, .86);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, .9);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      width: 150px; height: 150px;
+      border-radius: 38px;
+      background: rgba(255, 209, 102, .34);
+      top: -82px; right: -60px;
+      transform: rotate(22deg);
+    }
+    .panel::after {
+      content: "";
+      position: absolute;
+      width: 130px; height: 130px;
+      border-radius: 50%;
+      background: rgba(54, 209, 196, .15);
+      left: -64px; bottom: -58px;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .screen.scrolly { justify-content: flex-start; overflow-y: auto; }
+    .hidden { display: none !important; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 6.6vmin, 3.2rem);
+      line-height: 1.02;
+      letter-spacing: -.05em;
+      text-wrap: balance;
+      background: linear-gradient(100deg, #4433aa, var(--purple) 52%, var(--coral));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .intro-copy {
+      max-width: 430px;
+      margin: 14px auto 20px;
+      font-size: clamp(1rem, 3.6vmin, 1.18rem);
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    /* buttons */
+    .primary, .secondary {
+      width: min(100%, 360px);
+      min-height: 54px;
+      border: 0;
+      border-radius: 16px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+    .primary {
+      color: white;
+      background: linear-gradient(110deg, var(--purple), var(--coral));
+      box-shadow: 0 7px 0 var(--coral-dark);
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .primary:active { transform: translateY(4px); box-shadow: 0 3px 0 var(--coral-dark); }
+    .primary:disabled { opacity: .5; box-shadow: 0 7px 0 rgba(217,59,112,.35); cursor: default; }
+    .primary:disabled:active { transform: none; }
+    .secondary { color: var(--ink); background: #eef3f7; margin-top: 12px; }
+
+    .link-btn {
+      border: 0; background: none; color: var(--coral-dark);
+      font-weight: 800; cursor: pointer; padding: 8px 10px; border-radius: 12px;
+    }
+
+    /* mode toggle */
+    .mode-label { margin: 0 0 8px; font-weight: 800; color: var(--muted); font-size: .9rem; }
+    .mode-toggle {
+      display: inline-flex; gap: 6px; padding: 6px; margin: 0 auto 20px;
+      border-radius: 16px; background: #eef3f7;
+    }
+    .mode-option {
+      border: 0; border-radius: 12px; padding: 10px 15px; min-height: 44px;
+      font-weight: 800; color: var(--muted); background: transparent; cursor: pointer;
+    }
+    .mode-option.active {
+      color: white; background: linear-gradient(110deg, var(--purple), var(--coral));
+      box-shadow: 0 4px 0 var(--coral-dark);
+    }
+
+    /* ---- test screen ---- */
+    #testScreen { justify-content: space-between; }
+
+    .card-area {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .flash-card {
+      position: relative;
+      width: min(100%, 520px);
+      display: grid;
+      place-items: center;
+      padding: clamp(14px, 3vmin, 26px);
+      border: 5px solid white;
+      border-radius: 28px;
+      background: linear-gradient(145deg, #fff7ce 0%, #fff 45%, #eee8ff 100%);
+      box-shadow: 0 16px 0 rgba(124, 77, 255, .1), 0 24px 48px rgba(73, 45, 164, .15);
+      transform: rotate(-1deg);
+      animation: cardArrives .34s cubic-bezier(.2,.9,.3,1.25) both;
+    }
+
+    .word {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      font-size: clamp(1.8rem, 7.6vmin, 4.2rem);
+      line-height: 1.06;
+      letter-spacing: -.04em;
+      font-weight: 860;
+      text-wrap: balance;
+      min-height: clamp(90px, 20vmin, 150px);
+    }
+
+    .ear-display, .pencil-display {
+      display: grid;
+      place-items: center;
+      min-height: clamp(90px, 20vmin, 150px);
+      line-height: 1;
+    }
+    .ear-display { font-size: clamp(3.4rem, 15vmin, 7rem); animation: earPulse 1.1s ease-in-out infinite alternate; }
+    .pencil-display { font-size: clamp(3rem, 13vmin, 6rem); animation: bob 1.25s ease-in-out infinite alternate; }
+
+    .sparkle { position: absolute; font-size: 1.5rem; animation: twinkle 1s ease-in-out infinite alternate; }
+    .sparkle.one { left: 18px; top: 16px; }
+    .sparkle.two { right: 18px; bottom: 14px; animation-delay: .35s; }
+
+    .write-hint {
+      margin: 0;
+      color: var(--purple);
+      font-weight: 850;
+      font-size: clamp(1.05rem, 3.8vmin, 1.4rem);
+    }
+
+    .timer {
+      width: min(100%, 420px);
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e8e1fa;
+    }
+    .timer > span {
+      display: block; width: 100%; height: 100%; border-radius: inherit;
+      background: linear-gradient(90deg, var(--aqua), var(--blue), var(--coral));
+      transform-origin: left;
+    }
+    .timer.running > span { animation: drain 2s linear forwards; }
+
+    .test-controls {
+      flex: 0 0 auto;
+      display: flex;
+      gap: 10px;
+      width: min(100%, 460px);
+      margin: 0 auto;
+      padding-top: 14px;
+    }
+    .test-controls button { flex: 1; min-height: 54px; width: auto; margin-top: 0; }
+    .test-controls .back-btn { flex: 0 0 auto; padding: 0 14px; }
+    .test-controls button { white-space: nowrap; }
+    @media (max-width: 440px) {
+      .test-controls .lbl { display: none; }
+      .test-controls .back-btn, .test-controls #replayBtn { flex: 0 0 58px; padding: 0; font-size: 1.3rem; }
+      .test-controls #nextBtn { white-space: normal; line-height: 1.15; }
+    }
+    /* compact group chips so eight groups still leave the start button on screen */
+    .group-toggle { gap: 4px; padding: 5px; margin-bottom: 14px; }
+    .group-toggle .mode-option { padding: 6px 10px; min-height: 36px; font-size: .88rem; }
+    .secondary:disabled { opacity: .4; cursor: default; }
+
+    @keyframes cardArrives { from { opacity: 0; transform: translateY(20px) rotate(-4deg) scale(.9); } }
+    @keyframes twinkle { to { transform: rotate(20deg) scale(1.25); } }
+    @keyframes earPulse { to { transform: scale(1.1) rotate(-4deg); } }
+    @keyframes bob { to { transform: translateY(-9px) rotate(3deg); } }
+    @keyframes drain { to { transform: scaleX(0); } }
+
+    /* ---- correction screen ---- */
+    #correctionScreen { justify-content: flex-start; }
+    .correction-intro { margin: 0 0 12px; color: var(--muted); font-weight: 750; font-size: clamp(.92rem, 3.2vmin, 1.05rem); }
+
+    .correction-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 4px 2px;
+    }
+
+    .corr-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: #f6f4fb;
+      border: 2px solid transparent;
+    }
+    .corr-row.good { background: #dff8ec; border-color: rgba(45, 157, 120, .3); }
+    .corr-row.bad { background: #ffe5ea; border-color: rgba(217, 59, 112, .3); }
+
+    .row-speak {
+      flex: 0 0 auto; width: 38px; height: 38px; border-radius: 11px; border: 0;
+      background: #eaeef3; cursor: pointer; font-size: 1rem;
+    }
+    .corr-word { flex: 1 1 auto; text-align: left; font-weight: 800; font-size: clamp(1rem, 3.3vmin, 1.2rem); }
+    .corr-choices { flex: 0 0 auto; display: flex; gap: 6px; }
+    .corr-btn {
+      width: 46px; height: 46px; border-radius: 12px; border: 2px solid transparent;
+      background: #fff; cursor: pointer; font-size: 1.15rem;
+    }
+    .corr-btn.good.sel { background: #bfefd6; border-color: var(--green); }
+    .corr-btn.bad.sel { background: #ffd0d9; border-color: var(--red); }
+
+    .correction-foot {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      width: 100%;
+      padding-top: 12px;
+    }
+    .corr-count { text-align: center; color: var(--muted); font-weight: 800; font-size: .9rem; }
+    #finishBtn { width: 100%; }
+
+    /* ---- end screen ---- */
+    .trophy { display: block; margin: 6px auto 8px; font-size: clamp(3.4rem, 13vmin, 5.5rem); animation: trophyPop .75s cubic-bezier(.2,.9,.3,1.35) both; }
+    .encouragement { margin: 8px auto 0; color: var(--purple); font-size: clamp(1.3rem, 5.5vmin, 1.9rem); font-weight: 900; }
+    .mistake-block { width: min(100%, 480px); margin: 14px auto 18px; }
+    .mistake-title { margin: 0 0 10px; font-weight: 850; font-size: 1.02rem; color: var(--ink); }
+    .mistake-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .mistake-list .chip {
+      padding: 7px 13px; border-radius: 999px; background: #ffe5ea;
+      border: 2px solid rgba(217, 59, 112, .18); color: var(--coral-dark); font-weight: 800; font-size: .98rem;
+    }
+    .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    .confetti i {
+      position: absolute; top: -24px; left: var(--x); width: 10px; height: 20px;
+      border-radius: 4px; background: var(--c); animation: confettiFall var(--d) linear var(--delay) infinite;
+    }
+    @keyframes trophyPop { from { opacity: 0; transform: scale(.45) rotate(-16deg); } }
+    @keyframes confettiFall { to { transform: translateY(720px) rotate(700deg); } }
+
+    /* ---- editor ---- */
+    .editor { width: min(100%, 500px); margin: 0 auto; text-align: left; }
+    .editor label { display: block; margin: 0 0 8px; font-weight: 800; color: var(--ink); font-size: 1rem; }
+    .editor textarea {
+      width: 100%; min-height: 180px; max-height: 42svh; padding: 14px 16px; border-radius: 18px;
+      border: 2px solid rgba(124, 77, 255, .25); background: #fffdf8; color: var(--ink);
+      font-size: 1.05rem; line-height: 1.55; resize: vertical;
+    }
+    .editor textarea:focus { outline: 3px solid rgba(124, 77, 255, .35); outline-offset: 2px; border-color: var(--purple); }
+    .editor .hint { margin: 10px 2px 0; color: var(--muted); font-size: .9rem; line-height: 1.4; }
+    .edit-msg { min-height: 1.2em; margin: 12px 2px 0; color: var(--coral-dark); font-weight: 800; font-size: .95rem; text-align: center; }
+    .edit-actions { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px; }
+
+    /* ---- reactions ---- */
+    .reaction-layer { position: absolute; inset: 0; z-index: 30; overflow: hidden; pointer-events: none; }
+    .creature { position: absolute; font-size: clamp(2.6rem, 11vmin, 5rem); filter: drop-shadow(0 8px 10px rgba(44,34,86,.18)); }
+    .creature.good-pop { animation: happyPop 1.6s cubic-bezier(.2,.85,.35,1) both; }
+    .creature.skunk-run { animation: skunkRun 1.7s ease-in-out both; }
+    .creature.puff { font-size: clamp(1.8rem, 8vmin, 3.4rem); animation: puffAway 1.5s ease-out both; }
+    .reaction-label {
+      position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%);
+      padding: 11px 20px; border: 4px solid #fff; border-radius: 999px; color: #fff; font-weight: 950;
+      white-space: nowrap; font-size: clamp(1.1rem, 5.5vmin, 1.9rem); box-shadow: 0 12px 28px rgba(63,40,140,.24);
+      z-index: 31; animation: labelPop 1.6s ease both;
+    }
+    .reaction-label.good { background: linear-gradient(110deg, var(--purple), var(--coral)); }
+    .reaction-label.bad { background: linear-gradient(110deg, #59616b, #8c6a55); }
+    @keyframes happyPop { 0% { opacity: 0; transform: translateY(130px) scale(.3) rotate(-18deg); } 35% { opacity: 1; transform: translateY(-14px) scale(1.1) rotate(8deg); } 75% { opacity: 1; transform: translateY(4px) scale(1) rotate(-4deg); } 100% { opacity: 0; transform: translateY(-120px) scale(.8) rotate(12deg); } }
+    @keyframes skunkRun { 0% { opacity: 0; transform: translateX(-130px) rotate(-8deg); } 20%, 75% { opacity: 1; } 45% { transform: translateX(20px) rotate(8deg); } 100% { opacity: 0; transform: translateX(170px) rotate(-5deg); } }
+    @keyframes puffAway { 0% { opacity: 0; transform: translate(0, 25px) scale(.4); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(-80px, -95px) scale(1.5) rotate(18deg); } }
+    @keyframes labelPop { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.35); } 25%, 75% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -80%) scale(.85); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .flash-card, .ear-display, .pencil-display, .sparkle, .trophy, .confetti i, .creature, .reaction-label { animation: none !important; }
+      .primary:active { transform: none; }
+    }
+
+    /* ---- corrections sheet (screen preview + print) ---- */
+    #sheetScreen { justify-content: flex-start; }
+    .sheet-wrap { flex: 1 1 auto; min-height: 0; width: 100%; overflow-y: auto; padding: 4px 4px 10px; }
+    .sheet {
+      width: min(100%, 640px); margin: 0 auto; padding: 22px 20px 26px; text-align: left; color: #1b2733;
+      background: #fff; border: 1px solid #e3e8ee; border-radius: 12px; box-shadow: 0 6px 22px rgba(25, 50, 74, .14);
+    }
+    .sheet-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 16px; padding-bottom: 8px; border-bottom: 2px solid #1b2733; }
+    .sheet-title { font-size: 1.5rem; font-weight: 900; letter-spacing: -.02em; }
+    .sheet-meta { color: #4a5868; font-weight: 700; font-size: .9rem; }
+    .sheet-instr { margin: 10px 0 12px; font-weight: 750; font-size: 1rem; }
+    .sheet-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .sheet-table col.c-word { width: 31%; }
+    .sheet-table th { padding: 4px 6px; border: 1.5px solid #1b2733; background: #f3f5f8; color: #4a5868; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+    .sheet-table td { height: 58px; padding: 6px 8px; border: 1.5px solid #1b2733; vertical-align: bottom; }
+    .sheet-table td.sw { vertical-align: middle; font-weight: 850; font-size: 1.15rem; overflow-wrap: anywhere; }
+    .sheet-table .ln { position: relative; height: 34px; border-bottom: 1.5px solid #7d8a99; }
+    .sheet-table .ln::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed #b9c2cc; }
+    .sheet-actions { flex: 0 0 auto; display: flex; gap: 10px; width: min(100%, 460px); margin: 0 auto; padding-top: 12px; }
+    .sheet-actions button { flex: 1; width: auto; margin-top: 0; }
+    .print-area { display: none; }
+
+    @media print {
+      @page { size: A4 portrait; margin: 14mm; }
+      html, body { height: auto !important; overflow: visible !important; background: #fff !important; }
+      body.sheet-mode .app { display: none !important; }
+      body.sheet-mode .print-area { display: block !important; }
+      .print-area .sheet { width: 100%; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
+      .print-area .sheet-title { font-size: 20pt; }
+      .print-area .sheet-meta { font-size: 10pt; }
+      .print-area .sheet-instr { font-size: 12pt; }
+      .print-area .sheet-table thead { display: table-header-group; }
+      .print-area .sheet-table th { font-size: 9pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .print-area .sheet-table tr { break-inside: avoid; page-break-inside: avoid; }
+      .print-area .sheet-table td { height: 17mm; }
+      .print-area .sheet-table td.sw { font-size: 15pt; }
+      .print-area .sheet-table .ln { height: 10mm; }
+    }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <a class="home-link" href="index.html">← Accueil</a>
+      <div class="brand"><span class="mark" aria-hidden="true">Aa</span> Mots éclair</div>
+      <button class="icon-btn" id="soundToggle" type="button" aria-label="Couper le son" aria-pressed="true">🔊</button>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="reaction-layer" id="reactionLayer" aria-hidden="true"></div>
+
+        <div class="screen scrolly" id="startScreen">
+          <p class="eyebrow">✨ Défi des mots magiques ✨</p>
+          <h1>Regarde ou écoute.<br>Mémorise. Écris.</h1>
+          <p class="intro-copy">Tous les mots sont lus à voix haute. Écris chaque mot dans ton cahier — tu les corrigeras tous à la fin.</p>
+          <div class="mode-label" style="margin:0 0 8px;">Groupe de mots</div>
+          <div class="mode-toggle group-toggle" role="group" aria-label="Groupe de mots" style="flex-wrap:wrap;justify-content:center;max-width:100%;">
+            <button class="mode-option" data-group="o" type="button">[o]</button>
+            <button class="mode-option" data-group="e" type="button">[e]</button>
+            <button class="mode-option" data-group="ai" type="button">[ɛ]</button>
+            <button class="mode-option" data-group="temps" type="button">[présent · passé · futur]</button>
+            <button class="mode-option" data-group="inv" type="button">[invariables]</button>
+          </div>
+          <div id="modeToggleWrap">
+            <p class="mode-label">Comment veux-tu réviser&nbsp;?</p>
+            <div class="mode-toggle" role="group" aria-label="Mode de jeu">
+              <button class="mode-option" id="modeSee" type="button">👁️ Voir le mot</button>
+              <button class="mode-option" id="modeListen" type="button">👂 Écouter</button>
+            </div>
+          </div>
+          <button class="primary" id="startButton">C’est parti ! 🚀</button>
+          <button class="secondary" id="editListBtn" type="button">✏️ Modifier la liste (36 mots)</button>
+        </div>
+
+        <div class="screen hidden" id="testScreen">
+          <p class="eyebrow" id="testProgress">Mot 1 / 36</p>
+          <div class="card-area">
+            <div class="flash-card" id="flashCard">
+              <span class="sparkle one" aria-hidden="true">✨</span>
+              <p class="word hidden" id="wordDisplay"></p>
+              <div class="ear-display hidden" id="earDisplay" aria-hidden="true">👂</div>
+              <div class="pencil-display hidden" id="pencilDisplay" aria-hidden="true">✏️</div>
+              <span class="sparkle two" aria-hidden="true">⭐</span>
+            </div>
+            <div class="timer hidden" id="timer" aria-hidden="true"><span></span></div>
+            <p class="write-hint" id="writeHint">Écris le mot dans ton cahier ✏️</p>
+          </div>
+          <div class="test-controls">
+            <button class="secondary back-btn" id="backBtn" type="button" aria-label="Revenir au mot précédent">←<span class="lbl"> Retour</span></button>
+            <button class="secondary" id="replayBtn" type="button" aria-label="Réécouter le mot">🔊<span class="lbl"> Réécouter</span></button>
+            <button class="primary" id="nextBtn" type="button">Mot suivant →</button>
+          </div>
+        </div>
+
+        <div class="screen hidden" id="correctionScreen">
+          <p class="eyebrow">La correction ✅ ❌</p>
+          <p class="correction-intro">Pour chaque mot : ✅ si c’est juste, ❌ si c’est faux.</p>
+          <div class="correction-list" id="correctionList"></div>
+          <div class="correction-foot">
+            <span class="corr-count" id="corrCount">Corrigés : 0 / 36</span>
+            <button class="primary" id="finishBtn" type="button" disabled>Voir mon score →</button>
+          </div>
+        </div>
+
+        <div class="screen scrolly hidden" id="endScreen">
+          <div class="confetti" id="confetti" aria-hidden="true"></div>
+          <p class="eyebrow">Défi terminé !</p>
+          <span class="trophy" aria-hidden="true">🏆</span>
+          <h1>Bravo&nbsp;!</h1>
+          <p class="encouragement" id="finalScore">0 / 36</p>
+          <p class="intro-copy" id="endCopy">Tu as terminé le défi.</p>
+          <div class="mistake-block hidden" id="mistakeBlock">
+            <p class="mistake-title">Mots à revoir :</p>
+            <div class="mistake-list" id="mistakeList"></div>
+          </div>
+          <button class="primary hidden" id="retryMistakes" type="button">Revoir les mots faux</button>
+          <button class="secondary hidden" id="openSheet" type="button">🖨️ Ma feuille de corrections</button>
+          <button class="secondary" id="restartAll" type="button">Rejouer les 36 mots 🔄</button>
+        </div>
+
+        <div class="screen hidden" id="sheetScreen">
+          <p class="eyebrow">🖨️ Feuille de corrections</p>
+          <div class="sheet-wrap" id="sheetWrap"></div>
+          <div class="sheet-actions">
+            <button class="secondary" id="sheetBack" type="button">← Retour</button>
+            <button class="primary" id="sheetPrint" type="button">🖨️ Imprimer</button>
+          </div>
+        </div>
+
+        <div class="screen scrolly hidden" id="editScreen">
+          <p class="eyebrow" id="editEyebrow">✏️ La liste des mots</p>
+          <div class="editor">
+            <label for="wordEditor">Un mot (ou groupe de mots) par ligne</label>
+            <textarea id="wordEditor" spellcheck="false" autocapitalize="off"></textarea>
+            <p class="hint">Astuce : pour donner deux formes, écris-les avec un tiret, par exemple « chaud - chaude ». La liste est enregistrée sur cet appareil.</p>
+            <p class="edit-msg" id="editMsg"></p>
+          </div>
+          <div class="edit-actions">
+            <button class="primary" id="saveEdit" type="button">Enregistrer la liste ✅</button>
+            <button class="secondary" id="cancelEdit" type="button">Annuler</button>
+            <button class="link-btn" id="resetEdit" type="button">↩︎ Revenir à la liste d’origine</button>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <div class="print-area" id="printArea"></div>
+
+  <script>
+    const WORDS_O = [
+      "un homme", "un poste", "un ordre", "la fortune", "mort", "propre", "solide", "octobre",
+      "gros - grosse", "le dos", "le côté", "une chose", "le repos", "je me repose", "un copain", "le soleil", "un proverbe", "un costume",
+      "un autre - les autres", "chaud - chaude", "haut - haute", "l’aube", "pauvre", "l’automne", "(se) sauver", "je (me) sauve",
+      "un château", "un morceau", "un pinceau", "un gâteau", "beau - belle", "nouveau",
+      "une école", "une rose", "jaune", "un oiseau"
+    ];
+
+    const WORDS_E = [
+      "un éléphant", "l’écriture", "une étable", "une école", "une étoile", "une écurie", "répondre", "trouver - trouvé", "la mémoire", "un légume", "agréable", "désagréable",
+      "un baiser", "un cahier", "un papier", "le grenier", "un boulanger", "premier", "dernier - dernière", "un marché",
+      "l’été", "le passé", "un pré", "du blé", "une année", "une journée", "une matinée", "une cheminée", "une idée", "la moitié", "la liberté", "la santé", "la volonté", "la vérité",
+      "un nez", "un pied", "une clef", "vous allez", "et - est", "assez", "chez", "mes - tes - ses", "les - des"
+    ];
+
+    const WORDS_AI = [
+      "plein", "la neige", "la reine", "mais", "le lait", "il avait", "il était",
+      "une forêt", "la tête", "la mer", "une fête", "après", "très"
+    ];
+
+    // words added to the [e] list in Nov 2026; merged into a list already saved on a device
+    const E_ADDED = ["trouver - trouvé", "dernier - dernière", "et - est"];
+
+    const WORDS_PRESENT = ["aujourd’hui", "maintenant", "en ce moment", "de nos jours", "tous les soirs"];
+    const WORDS_PASSE = ["hier", "avant-hier", "autrefois", "le mois dernier", "il y a deux jours"];
+    const WORDS_FUTUR = ["demain", "après-demain", "bientôt", "le mois prochain", "dans trois jours"];
+
+    const WORDS_INV1 = ["jamais", "parfois", "quand", "souvent", "toujours"];
+    const WORDS_INV2 = ["pendant", "longtemps", "d’abord", "ensuite", "puis", "toujours"];
+    const WORDS_INV3 = ["pourquoi", "parce que", "pour", "car", "cependant"];
+    const WORDS_INV4 = ["où", "entre", "contre", "à travers", "autour"];
+    const WORDS_INV5 = ["soudain", "aussitôt", "enfin", "aussi", "encore"];
+    const WORDS_INV6 = ["quelquefois", "lorsque", "pourtant", "durant", "alors"];
+    const WORDS_INV7 = ["lorsque", "mais", "toutefois", "comme", "donc"];
+    const WORDS_INV8 = ["près de", "dans", "dedans", "dehors", "auprès de"];
+    const WORDS_INV9 = ["depuis", "avant", "après", "désormais", "tard", "tôt"];
+    // Séries 4–6 added Nov 2026; merged into an invariables list already saved on a device
+    const INV_ADDED = [...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6, ...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9];
+
+    // combined lists; "toujours" is in both Série 1 and Série 2, so it is kept once
+    const WORDS_TEMPS = [...WORDS_PRESENT, ...WORDS_PASSE, ...WORDS_FUTUR];
+    const WORDS_INV = [...new Set([...WORDS_INV1, ...WORDS_INV2, ...WORDS_INV3, ...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6, ...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9])];
+
+    const GROUPS = { o: WORDS_O, e: WORDS_E, ai: WORDS_AI, temps: WORDS_TEMPS, inv: WORDS_INV };
+    const GROUP_LABELS = { o: "[o]", e: "[e]", ai: "[ɛ]", temps: "[présent · passé · futur]", inv: "[invariables]" };
+    // a device last left on one of the old separate lists opens on the matching combined list
+    const OLD_GROUPS = { present: "temps", passe: "temps", futur: "temps", inv1: "inv", inv2: "inv", inv3: "inv" };
+
+    const $ = (id) => document.getElementById(id);
+    const screens = ["startScreen", "testScreen", "correctionScreen", "endScreen", "editScreen", "sheetScreen"];
+    const STORE_SOUND = "motsEclair.sound.v1";
+    const STORE_MODE = "motsEclair.mode.v1";
+    const STORE_GROUP = "motsEclair.group.v1";
+    const STORE_WORDS_OLD = "motsEclair.words.v1";
+    const storeKey = (g) => "motsEclair.words." + g + ".v1";
+
+    let group = loadGroup();
+    let allWords = loadWords(group);
+    let soundOn = loadSound();
+    let showWordMode = loadMode();
+    let deck = [];
+    let index = 0;
+    let marks = [];
+    let lastMistakes = [];
+    let playedLabel = "";
+    let flashTimeout;
+
+    /* ---------- storage ---------- */
+    function parseList(raw) {
+      try {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          const clean = arr.filter((w) => typeof w === "string" && w.trim()).map((w) => w.trim());
+          if (clean.length) return clean;
+        }
+      } catch (e) {}
+      return null;
+    }
+    function loadWords(g) {
+      try {
+        const raw = localStorage.getItem(storeKey(g));
+        if (raw) { const c = parseList(raw); if (c) return g === "e" ? mergeE(c) : g === "inv" ? mergeAdded(c, INV_ADDED) : c; }
+        if (g === "o") { const old = localStorage.getItem(STORE_WORDS_OLD); if (old) { const c = parseList(old); if (c) return c; } }
+      } catch (e) {}
+      return GROUPS[g].slice();
+    }
+    function mergeE(list) {
+      const out = list.map((w) => (w === "et" ? "et - est" : w));
+      E_ADDED.forEach((w) => { if (!out.includes(w)) out.push(w); });
+      return out;
+    }
+    function mergeAdded(list, added) {
+      const out = list.slice();
+      added.forEach((w) => { if (!out.includes(w)) out.push(w); });
+      return out;
+    }
+    function saveWords(arr) { try { localStorage.setItem(storeKey(group), JSON.stringify(arr)); } catch (e) {} }
+    function loadGroup() { try { let g = localStorage.getItem(STORE_GROUP); if (OLD_GROUPS[g]) g = OLD_GROUPS[g]; return GROUPS[g] ? g : "o"; } catch (e) { return "o"; } }
+    function saveGroup() { try { localStorage.setItem(STORE_GROUP, group); } catch (e) {} }
+    function loadSound() { try { return localStorage.getItem(STORE_SOUND) !== "off"; } catch (e) { return true; } }
+    function saveSound() { try { localStorage.setItem(STORE_SOUND, soundOn ? "on" : "off"); } catch (e) {} }
+    function loadMode() { try { return localStorage.getItem(STORE_MODE) !== "listen"; } catch (e) { return true; } }
+    function saveMode() { try { localStorage.setItem(STORE_MODE, showWordMode ? "see" : "listen"); } catch (e) {} }
+
+    /* ---------- speech ---------- */
+    const speechOK = typeof window !== "undefined" && "speechSynthesis" in window;
+    let frVoice = null;
+
+    function pickFrenchVoice(voices) {
+      const fr = voices.filter((v) => /^fr(-|_|$)/i.test(v.lang) || /fran[cç]ais|french/i.test(v.name));
+      if (!fr.length) return null;
+      const rank = (v) => {
+        const n = (v.name || "").toLowerCase();
+        let s = 0;
+        if (/google/.test(n)) s += 6;
+        if (/natural|neural|online/.test(n)) s += 5;
+        if (/enhanced|premium|amélie|amelie|thomas|aurélie|aurelie|audrey|marie/.test(n)) s += 5;
+        if (v.localService === false) s += 2;
+        if (/compact|espeak|e-speak/.test(n)) s -= 6;
+        if (/fr-fr/i.test(v.lang)) s += 1;
+        return s;
+      };
+      const best = fr.slice().sort((a, b) => rank(b) - rank(a))[0];
+      return rank(best) > 0 ? best : null;
+    }
+    function loadVoices() {
+      if (!speechOK) return;
+      try { frVoice = pickFrenchVoice(speechSynthesis.getVoices() || []); } catch (e) {}
+    }
+    function speakable(word) {
+      return word.replace(/\s+-\s+/g, ", ").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+    }
+    function speak(word, essential) {
+      if (!speechOK || !word) return;
+      if (!essential && !soundOn) return;
+      try {
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(speakable(word));
+        u.lang = "fr-FR";
+        if (frVoice) u.voice = frVoice;
+        u.rate = 0.9;
+        speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+    function updateSoundButton() {
+      const btn = $("soundToggle");
+      btn.textContent = soundOn ? "🔊" : "🔇";
+      btn.setAttribute("aria-pressed", String(soundOn));
+      btn.setAttribute("aria-label", soundOn ? "Couper le son" : "Activer le son");
+    }
+
+    /* ---------- helpers ---------- */
+    function shuffle(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+    function showOnly(id) {
+      screens.forEach((s) => $(s).classList.toggle("hidden", s !== id));
+      // printing replaces the page with the corrections sheet only while that screen is open
+      document.body.classList.toggle("sheet-mode", id === "sheetScreen");
+    }
+    function refreshCounts() {
+      const n = allWords.length;
+      $("editListBtn").textContent = `✏️ Modifier la liste ${GROUP_LABELS[group]} (${n} mot${n > 1 ? "s" : ""})`;
+      $("restartAll").textContent = n > 1 ? `Rejouer les ${n} mots 🔄` : "Rejouer le mot 🔄";
+    }
+    function updateGroupUI() {
+      document.querySelectorAll("[data-group]").forEach((b) => {
+        const on = b.dataset.group === group;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+    }
+    function setGroup(g) {
+      if (g === group) return;
+      group = g; saveGroup();
+      allWords = loadWords(group);
+      updateGroupUI(); refreshCounts();
+    }
+    function updateModeUI() {
+      $("modeSee").classList.toggle("active", showWordMode);
+      $("modeListen").classList.toggle("active", !showWordMode);
+      $("modeSee").setAttribute("aria-pressed", String(showWordMode));
+      $("modeListen").setAttribute("aria-pressed", String(!showWordMode));
+    }
+    function setMode(seeWord) {
+      showWordMode = seeWord;
+      saveMode();
+      if (!showWordMode && !soundOn) { soundOn = true; saveSound(); updateSoundButton(); }
+      updateModeUI();
+    }
+
+    /* ---------- phase 1: testing ---------- */
+    function begin(words) {
+      clearTimeout(flashTimeout);
+      clearTimeout(reactionTimer);
+      const rl = $("reactionLayer"); if (rl) rl.replaceChildren();
+      deck = shuffle(words);
+      playedLabel = GROUP_LABELS[group];
+      index = 0;
+      marks = deck.map(() => null);
+      showTest();
+    }
+
+    function showTest() {
+      clearTimeout(flashTimeout);
+      $("testProgress").textContent = `Mot ${index + 1} / ${deck.length}`;
+      const last = index === deck.length - 1;
+      $("nextBtn").textContent = last ? "Corriger mes mots →" : "Mot suivant →";
+      $("backBtn").disabled = index === 0;
+
+      $("wordDisplay").classList.add("hidden");
+      $("earDisplay").classList.add("hidden");
+      $("pencilDisplay").classList.add("hidden");
+      const timer = $("timer");
+
+      if (showWordMode) {
+        $("wordDisplay").textContent = deck[index];
+        $("wordDisplay").classList.remove("hidden");
+        $("writeHint").textContent = "Regarde bien… 👀";
+        timer.classList.remove("hidden");
+        timer.classList.remove("running");
+        void timer.offsetWidth;
+        timer.classList.add("running");
+        speak(deck[index]);
+        flashTimeout = setTimeout(() => {
+          $("wordDisplay").classList.add("hidden");
+          $("pencilDisplay").classList.remove("hidden");
+          $("writeHint").textContent = "Écris le mot dans ton cahier ✏️";
+          timer.classList.add("hidden");
+          timer.classList.remove("running");
+        }, 2000);
+      } else {
+        $("earDisplay").classList.remove("hidden");
+        $("writeHint").textContent = "Écoute puis écris le mot ✏️";
+        timer.classList.add("hidden");
+        speak(deck[index], true);
+      }
+      showOnly("testScreen");
+    }
+
+    // step back one word: the previous word is shown/read again exactly as the first time
+    function prevWord() {
+      if (index === 0) return;
+      clearTimeout(flashTimeout);
+      index -= 1;
+      showTest();
+    }
+
+    function nextWord() {
+      clearTimeout(flashTimeout);
+      if (index >= deck.length - 1) {
+        showCorrection();
+      } else {
+        index += 1;
+        showTest();
+      }
+    }
+
+    /* ---------- phase 2: correction ---------- */
+    function showCorrection() {
+      const list = $("correctionList");
+      list.replaceChildren(...deck.map((word, i) => {
+        const row = document.createElement("div");
+        row.className = "corr-row";
+        row.dataset.i = String(i);
+
+        const spk = document.createElement("button");
+        spk.className = "row-speak";
+        spk.type = "button";
+        spk.textContent = "🔊";
+        spk.setAttribute("aria-label", "Écouter le mot");
+        spk.addEventListener("click", () => speak(word, true));
+
+        const w = document.createElement("span");
+        w.className = "corr-word";
+        w.textContent = word;
+
+        const choices = document.createElement("div");
+        choices.className = "corr-choices";
+        const good = document.createElement("button");
+        good.className = "corr-btn good"; good.type = "button"; good.textContent = "✅"; good.setAttribute("aria-label", "Juste");
+        const bad = document.createElement("button");
+        bad.className = "corr-btn bad"; bad.type = "button"; bad.textContent = "❌"; bad.setAttribute("aria-label", "Faux");
+        good.addEventListener("click", () => mark(i, "good"));
+        bad.addEventListener("click", () => mark(i, "bad"));
+        choices.append(good, bad);
+
+        row.append(spk, w, choices);
+        return row;
+      }));
+      updateCorrCount();
+      showOnly("correctionScreen");
+      list.scrollTop = 0;
+    }
+
+    function mark(i, val) {
+      marks[i] = val;
+      const row = $("correctionList").querySelector('.corr-row[data-i="' + i + '"]');
+      if (row) {
+        row.classList.toggle("good", val === "good");
+        row.classList.toggle("bad", val === "bad");
+        row.querySelector(".corr-btn.good").classList.toggle("sel", val === "good");
+        row.querySelector(".corr-btn.bad").classList.toggle("sel", val === "bad");
+      }
+      updateCorrCount();
+    }
+
+    function updateCorrCount() {
+      const done = marks.filter((m) => m !== null).length;
+      $("corrCount").textContent = `Corrigés : ${done} / ${deck.length}`;
+      $("finishBtn").disabled = done < deck.length;
+    }
+
+    /* ---------- end ---------- */
+    function finish() {
+      const correct = marks.filter((m) => m === "good").length;
+      lastMistakes = deck.filter((w, i) => marks[i] === "bad");
+
+      $("finalScore").textContent = `${correct} bonne${correct > 1 ? "s" : ""} réponse${correct > 1 ? "s" : ""} sur ${deck.length}`;
+      $("endCopy").textContent = lastMistakes.length
+        ? `${lastMistakes.length} mot${lastMistakes.length > 1 ? "s" : ""} à revoir. Tu peux les refaire tout de suite.`
+        : "Tout est juste. Quel sans-faute !";
+
+      const mlist = $("mistakeList");
+      if (lastMistakes.length) {
+        mlist.replaceChildren(...lastMistakes.map((word) => {
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          chip.textContent = word;
+          return chip;
+        }));
+        $("mistakeBlock").classList.remove("hidden");
+      } else {
+        mlist.replaceChildren();
+        $("mistakeBlock").classList.add("hidden");
+      }
+      $("retryMistakes").classList.toggle("hidden", lastMistakes.length === 0);
+      $("openSheet").classList.toggle("hidden", lastMistakes.length === 0);
+      makeConfetti();
+      showOnly("endScreen");
+      if (lastMistakes.length === 0) react("good", 8); else react("bad", lastMistakes.length);
+    }
+
+    function makeConfetti() {
+      const colors = ["#7c4dff", "#ff5d8f", "#36d1c4", "#ffd84d", "#ff8a4c"];
+      const pieces = Array.from({ length: 32 }, (_, i) => {
+        const piece = document.createElement("i");
+        piece.style.setProperty("--x", `${(i * 37) % 100}%`);
+        piece.style.setProperty("--c", colors[i % colors.length]);
+        piece.style.setProperty("--d", `${2.8 + (i % 5) * .35}s`);
+        piece.style.setProperty("--delay", `${-(i % 7) * .4}s`);
+        return piece;
+      });
+      $("confetti").replaceChildren(...pieces);
+    }
+
+    /* ---------- corrections sheet ---------- */
+    function el(tag, cls, text) {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    }
+    // one row per wrong word, then three empty columns to copy it out
+    function buildSheet(words) {
+      const date = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+      const sheet = el("div", "sheet");
+      const head = el("div", "sheet-head");
+      head.append(el("div", "sheet-title", "Mes corrections ✏️"), el("div", "sheet-meta", `Mots éclair · ${playedLabel} · ${date}`));
+      const table = el("table", "sheet-table");
+      const cols = el("colgroup");
+      cols.append(el("col", "c-word"), el("col"), el("col"), el("col"));
+      const thead = el("thead");
+      const hr = el("tr");
+      ["Mot", "1", "2", "3"].forEach((t) => hr.append(el("th", null, t)));
+      thead.append(hr);
+      const tbody = el("tbody");
+      words.forEach((w) => {
+        const tr = el("tr");
+        tr.append(el("td", "sw", w));
+        for (let k = 0; k < 3; k++) { const td = el("td"); td.append(el("div", "ln")); tr.append(td); }
+        tbody.append(tr);
+      });
+      table.append(cols, thead, tbody);
+      sheet.append(head, el("p", "sheet-instr", "Recopie chaque mot 3 fois."), table);
+      return sheet;
+    }
+    function openSheet() {
+      if (!lastMistakes.length) return;
+      $("sheetWrap").replaceChildren(buildSheet(lastMistakes));
+      $("printArea").replaceChildren(buildSheet(lastMistakes));
+      clearTimeout(reactionTimer);
+      $("reactionLayer").replaceChildren();
+      showOnly("sheetScreen");
+      $("sheetWrap").scrollTop = 0;
+    }
+
+    /* ---------- reactions ---------- */
+    let reactionTimer;
+    function addCreature(layer, emoji, cls, left, top, delay) {
+      const el = document.createElement("span");
+      el.className = "creature " + cls;
+      el.textContent = emoji;
+      el.style.left = left; el.style.top = top; el.style.animationDelay = delay || "0s";
+      layer.appendChild(el);
+    }
+    function react(kind, magnitude) {
+      const layer = $("reactionLayer");
+      if (!layer) return;
+      clearTimeout(reactionTimer);
+      layer.replaceChildren();
+      const label = document.createElement("strong");
+      if (kind === "good") {
+        label.className = "reaction-label good";
+        label.textContent = "Bravo ! 🌟";
+        const n = Math.max(3, Math.min(10, magnitude || 4));
+        for (let i = 0; i < n; i++) {
+          addCreature(layer, i % 2 ? "🌈" : "🦄", "good-pop", (5 + (i * 83) % 88) + "%", (6 + (i * 47) % 72) + "%", (i * 0.12) + "s");
+        }
+      } else {
+        label.className = "reaction-label bad";
+        label.textContent = magnitude > 1 ? "Oups… à revoir" : "Presque !";
+        const n = Math.max(1, Math.min(8, magnitude || 1));
+        for (let i = 0; i < n; i++) {
+          addCreature(layer, "🦨", "skunk-run", "-5%", (10 + (i * 61) % 74) + "%", (i * 0.16) + "s");
+        }
+        for (let i = 0; i < Math.min(3, n); i++) {
+          addCreature(layer, "💨", "puff", (18 + i * 28) + "%", (38 + (i * 17) % 50) + "%", (i * 0.2 + 0.1) + "s");
+        }
+      }
+      layer.appendChild(label);
+      reactionTimer = setTimeout(() => layer.replaceChildren(), 1900);
+    }
+
+    /* ---------- editor ---------- */
+    function openEditor() {
+      clearTimeout(flashTimeout);
+      $("editEyebrow").textContent = "✏️ La liste des mots " + GROUP_LABELS[group];
+      if (speechOK) { try { speechSynthesis.cancel(); } catch (e) {} }
+      $("wordEditor").value = allWords.join("\n");
+      $("editMsg").textContent = "";
+      showOnly("editScreen");
+    }
+    function saveEditor() {
+      const lines = $("wordEditor").value.split("\n").map((s) => s.trim()).filter(Boolean);
+      if (!lines.length) { $("editMsg").textContent = "Ajoute au moins un mot pour enregistrer."; return; }
+      allWords = lines;
+      saveWords(allWords);
+      refreshCounts();
+      showOnly("startScreen");
+    }
+
+    /* ---------- wire up ---------- */
+    if (speechOK) {
+      loadVoices();
+      try { speechSynthesis.onvoiceschanged = loadVoices; } catch (e) {}
+    } else {
+      $("soundToggle").classList.add("hidden");
+      $("modeToggleWrap").classList.add("hidden");
+      showWordMode = true;
+    }
+    updateSoundButton();
+    updateModeUI();
+    refreshCounts();
+    updateGroupUI();
+
+    $("soundToggle").addEventListener("click", () => {
+      soundOn = !soundOn;
+      if (!soundOn && speechOK) { try { speechSynthesis.cancel(); } catch (e) {} }
+      updateSoundButton();
+      saveSound();
+    });
+    $("modeSee").addEventListener("click", () => setMode(true));
+    $("modeListen").addEventListener("click", () => setMode(false));
+    document.querySelectorAll("[data-group]").forEach((b) => b.addEventListener("click", () => setGroup(b.dataset.group)));
+    $("startButton").addEventListener("click", () => begin(allWords));
+    $("editListBtn").addEventListener("click", openEditor);
+    $("replayBtn").addEventListener("click", () => speak(deck[index], true));
+    $("nextBtn").addEventListener("click", nextWord);
+    $("backBtn").addEventListener("click", prevWord);
+    $("finishBtn").addEventListener("click", finish);
+    $("retryMistakes").addEventListener("click", () => begin(lastMistakes));
+    $("restartAll").addEventListener("click", () => begin(allWords));
+    $("openSheet").addEventListener("click", openSheet);
+    $("sheetBack").addEventListener("click", () => showOnly("endScreen"));
+    $("sheetPrint").addEventListener("click", () => { try { window.print(); } catch (e) {} });
+    $("saveEdit").addEventListener("click", saveEditor);
+    $("cancelEdit").addEventListener("click", () => showOnly("startScreen"));
+    $("resetEdit").addEventListener("click", () => { $("wordEditor").value = GROUPS[group].join("\n"); $("editMsg").textContent = ""; });
+  </script>
+
+</body>
+</html>
