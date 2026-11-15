@@ -199,16 +199,17 @@
     .sent .w { padding: 2px 2px; border-radius: 8px; }
     .sent .punct { margin-left: -2px; }
     .sent.tappable .w { cursor: pointer; }
-    .sent.tappable .w:hover { background: #f1edff; }
-    .chunk.sel .w { background: #dcd2ff; }
+    @media (hover: hover) { .sent.tappable .w:hover { background: #f1edff; } }
     .chunk.ul { text-decoration: underline 3px var(--ink); text-underline-offset: 7px; }
-    .chunk.mk-good .w { background: #c9f2dc; }
-    .chunk.mk-bad .w { background: #ffd0d9; text-decoration: line-through 2px var(--red); }
-    .chunk.mk-show .w { background: #fff1c2; }
     .chunk.mk-V { text-decoration: underline 4px var(--coral); text-underline-offset: 8px; }
     .chunk.mk-S, .chunk.mk-T { border-radius: 999px; box-shadow: 0 0 0 3px var(--blue); -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 2px 0; }
     .sent.letters { letter-spacing: 0; }
     .sent.letters .w { display: inline-grid; place-items: center; min-width: 1.7em; margin: 3px 2px; padding: 4px 8px; background: #f3f0ff; border-radius: 12px; text-decoration: none; }
+    /* selected / marked states come last so they beat the letter-tile and hover styles */
+    .sent .chunk.sel .w { background: var(--purple); color: #fff; box-shadow: 0 3px 0 #5631c9; }
+    .sent .chunk.mk-good .w { background: #c9f2dc; color: #135c43; box-shadow: none; }
+    .sent .chunk.mk-bad .w { background: #ffd0d9; color: #8f1f2e; box-shadow: none; text-decoration: line-through 2px var(--red); }
+    .sent .chunk.mk-show .w { background: #fff1c2; box-shadow: none; }
 
     .opts { display: grid; gap: 10px; width: min(100%, 540px); grid-template-columns: repeat(var(--cols, 2), 1fr); }
     .opt {
