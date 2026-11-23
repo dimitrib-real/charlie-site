@@ -626,12 +626,15 @@
     const WORDS_INV7 = ["lorsque", "mais", "toutefois", "comme", "donc"];
     const WORDS_INV8 = ["près de", "dans", "dedans", "dehors", "auprès de"];
     const WORDS_INV9 = ["depuis", "avant", "après", "désormais", "tard", "tôt"];
+    const WORDS_INV10 = ["combien", "beaucoup", "peu", "assez", "plus", "moins", "autant"];
+    const WORDS_INV11 = ["chez", "loin", "près", "auprès", "partout", "moins"];
+    const WORDS_INV12 = ["sur", "dessus", "sous", "au-dessus", "au-dessous", "devant"];
     // Séries 4–6 added Nov 2026; merged into an invariables list already saved on a device
-    const INV_ADDED = [...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6, ...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9];
+    const INV_ADDED = [...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6, ...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9, ...WORDS_INV10, ...WORDS_INV11, ...WORDS_INV12];
 
     // combined lists; "toujours" is in both Série 1 and Série 2, so it is kept once
     const WORDS_TEMPS = [...WORDS_PRESENT, ...WORDS_PASSE, ...WORDS_FUTUR];
-    const WORDS_INV = [...new Set([...WORDS_INV1, ...WORDS_INV2, ...WORDS_INV3, ...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6, ...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9])];
+    const WORDS_INV = [...new Set([...WORDS_INV1, ...WORDS_INV2, ...WORDS_INV3, ...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6, ...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9, ...WORDS_INV10, ...WORDS_INV11, ...WORDS_INV12])];
 
     const GROUPS = { o: WORDS_O, e: WORDS_E, ai: WORDS_AI, temps: WORDS_TEMPS, inv: WORDS_INV };
     const GROUP_LABELS = { o: "[o]", e: "[e]", ai: "[ɛ]", temps: "[présent · passé · futur]", inv: "[invariables]" };
