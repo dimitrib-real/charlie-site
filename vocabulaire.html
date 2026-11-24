@@ -500,7 +500,8 @@
             <button class="mode-option" data-group="e" type="button">[e]</button>
             <button class="mode-option" data-group="ai" type="button">[ɛ]</button>
             <button class="mode-option" data-group="temps" type="button">[présent · passé · futur]</button>
-            <button class="mode-option" data-group="inv" type="button">[invariables]</button>
+            <button class="mode-option" data-group="invA" type="button">[invariables 1–6]</button>
+            <button class="mode-option" data-group="invB" type="button">[invariables 7–12]</button>
           </div>
           <div id="modeToggleWrap">
             <p class="mode-label">Comment veux-tu réviser&nbsp;?</p>
@@ -629,17 +630,17 @@
     const WORDS_INV10 = ["combien", "beaucoup", "peu", "assez", "plus", "moins", "autant"];
     const WORDS_INV11 = ["chez", "loin", "près", "auprès", "partout", "moins"];
     const WORDS_INV12 = ["sur", "dessus", "sous", "au-dessus", "au-dessous", "devant"];
-    // Séries 4–6 added Nov 2026; merged into an invariables list already saved on a device
-    const INV_ADDED = [...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6, ...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9, ...WORDS_INV10, ...WORDS_INV11, ...WORDS_INV12];
 
     // combined lists; "toujours" is in both Série 1 and Série 2, so it is kept once
     const WORDS_TEMPS = [...WORDS_PRESENT, ...WORDS_PASSE, ...WORDS_FUTUR];
-    const WORDS_INV = [...new Set([...WORDS_INV1, ...WORDS_INV2, ...WORDS_INV3, ...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6, ...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9, ...WORDS_INV10, ...WORDS_INV11, ...WORDS_INV12])];
+    // invariables split in two lists: Séries 1–6 and Séries 7–12 (a word repeated inside a list is kept once)
+    const WORDS_INV_A = [...new Set([...WORDS_INV1, ...WORDS_INV2, ...WORDS_INV3, ...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6])];
+    const WORDS_INV_B = [...new Set([...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9, ...WORDS_INV10, ...WORDS_INV11, ...WORDS_INV12])];
 
-    const GROUPS = { o: WORDS_O, e: WORDS_E, ai: WORDS_AI, temps: WORDS_TEMPS, inv: WORDS_INV };
-    const GROUP_LABELS = { o: "[o]", e: "[e]", ai: "[ɛ]", temps: "[présent · passé · futur]", inv: "[invariables]" };
+    const GROUPS = { o: WORDS_O, e: WORDS_E, ai: WORDS_AI, temps: WORDS_TEMPS, invA: WORDS_INV_A, invB: WORDS_INV_B };
+    const GROUP_LABELS = { o: "[o]", e: "[e]", ai: "[ɛ]", temps: "[présent · passé · futur]", invA: "[invariables 1–6]", invB: "[invariables 7–12]" };
     // a device last left on one of the old separate lists opens on the matching combined list
-    const OLD_GROUPS = { present: "temps", passe: "temps", futur: "temps", inv1: "inv", inv2: "inv", inv3: "inv" };
+    const OLD_GROUPS = { present: "temps", passe: "temps", futur: "temps", inv: "invA", inv1: "invA", inv2: "invA", inv3: "invA" };
 
     const $ = (id) => document.getElementById(id);
     const screens = ["startScreen", "testScreen", "correctionScreen", "endScreen", "editScreen", "sheetScreen"];
@@ -674,7 +675,7 @@
     function loadWords(g) {
       try {
         const raw = localStorage.getItem(storeKey(g));
-        if (raw) { const c = parseList(raw); if (c) return g === "e" ? mergeE(c) : g === "inv" ? mergeAdded(c, INV_ADDED) : c; }
+        if (raw) { const c = parseList(raw); if (c) return g === "e" ? mergeE(c) : c; }
         if (g === "o") { const old = localStorage.getItem(STORE_WORDS_OLD); if (old) { const c = parseList(old); if (c) return c; } }
       } catch (e) {}
       return GROUPS[g].slice();
