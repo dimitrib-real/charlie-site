@@ -274,7 +274,8 @@
     .row2 .back-btn { flex: 0 0 auto; padding: 0 14px; }
     .secondary:disabled { opacity: .4; cursor: default; }
     @media (max-width: 440px) {
-      #spellStart .mode-toggle { display: grid; grid-template-columns: 1fr 1fr; width: min(100%, 300px); }
+      #spellStart .mode-toggle { display: grid; grid-template-columns: repeat(3, 1fr); width: min(100%, 320px); }
+      #spellStart .mode-option { padding: 10px 6px; }
       .row2 .lbl { display: none; }
       .row2 .back-btn, .row2 #spellSay { flex: 0 0 58px; padding: 0; font-size: 1.3rem; }
       .row2 #spellAdvance { white-space: normal; line-height: 1.15; }
@@ -373,6 +374,8 @@
             <button class="mode-option" data-unit="unit2" type="button">Unit 2</button>
             <button class="mode-option" data-unit="unit3" type="button">Unit 3</button>
             <button class="mode-option" data-unit="unit4" type="button">Unit 4</button>
+            <button class="mode-option" data-unit="unit5" type="button">Unit 5</button>
+            <button class="mode-option" data-unit="unit6" type="button">Unit 6</button>
           </div>
           <button class="primary" id="spellGo" type="button">Let’s go! 🚀</button>
           <button class="secondary" id="editSpell" type="button">✏️ Edit the Unit 1 list (11 words)</button>
@@ -510,9 +513,11 @@
       unit1: ["tail", "nail", "snail", "ray", "play", "tray", "stray", "blame", "flame", "flake", "snake"],
       unit2: ["been", "seen", "sheep", "sweet", "cheese", "bean", "steam", "stream", "seat", "meat", "please", "these", "complete"],
       unit3: ["slide", "tide", "tile", "while", "smile", "spike", "bride", "flight", "right", "bright", "fright", "my", "why", "cycle"],
-      unit4: ["boat", "goat", "goal", "coal", "toast", "roast", "hope", "rope", "cone", "bone", "broke", "smoke", "window", "borrow"]
+      unit4: ["boat", "goat", "goal", "coal", "toast", "roast", "hope", "rope", "cone", "bone", "broke", "smoke", "window", "borrow"],
+      unit5: ["pool", "moon", "spoon", "balloon", "cube", "tune", "June", "blue", "blew", "flew", "crew", "screw", "book", "took", "foot", "good"],
+      unit6: ["car", "cart", "dark", "park", "lark", "spark", "shark", "star", "start", "arm", "farm", "garden", "barley", "warm", "ward", "forward"]
     };
-    const UNIT_LABELS = { unit1: "Unit 1", unit2: "Unit 2", unit3: "Unit 3", unit4: "Unit 4" };
+    const UNIT_LABELS = { unit1: "Unit 1", unit2: "Unit 2", unit3: "Unit 3", unit4: "Unit 4", unit5: "Unit 5", unit6: "Unit 6" };
 
     const $ = (id) => document.getElementById(id);
     const screens = ["engHome", "editScreen", "flashScreen", "flashEnd", "spellStart", "spellScreen", "spellCorrection", "spellEnd", "spellSheet"];
