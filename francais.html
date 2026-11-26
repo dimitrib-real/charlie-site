@@ -553,7 +553,19 @@
           { t: "__Exemple__ : Les élèves apprennent leurs leçons. → Il faut **apprendre** : apprendre est l’infinitif du verbe.", cls: "ex",
             s: "Exemple : Les élèves apprennent leurs leçons. Il faut apprendre. Apprendre est l’infinitif du verbe." }
         ] },
-      { id: "l17", n: "17", title: "Les familles de mots", c: "#ff5d8f",
+      { id: "present", n: "17", title: "Le présent des verbes en -er", c: "#ef7d3c",
+        text: [
+          "==Au présent, le verbe exprime une action que l’on fait au moment où on parle.== ==Pour conjuguer un verbe au présent, je garde le **radical** du verbe et j’ajoute les **terminaisons**.==",
+          "**Conjugaison du verbe sauter au présent :**",
+          { t: "==Je saut__e__==", cls: "li", s: "Je saute" },
+          { t: "==Tu saut__es__==", cls: "li", s: "Tu sautes" },
+          { t: "==Il, elle saut__e__==", cls: "li", s: "Il, elle saute" },
+          { t: "==Nous saut__ons__==", cls: "li", s: "Nous sautons" },
+          { t: "==Vous saut__ez__==", cls: "li", s: "Vous sautez" },
+          { t: "==Ils, elles saut__ent__==", cls: "li", s: "Ils, elles sautent" },
+          { t: "__Exemple__ : Julien et Tom **sautent** à la corde.", cls: "ex" }
+        ] },
+      { id: "l17", n: "✦", title: "Les familles de mots", c: "#ff5d8f",
         text: [
           "++Des mots sont de la **même famille** lorsqu’ils ont **un sens proche** et **une partie commune**, appelée le **radical**.++",
           { t: "__Exemples__ : fleur – fleuriste – fleuri – fleurir. Tous ces mots parlent de la **fleur**.", cls: "ex" },
@@ -837,6 +849,29 @@
         inf("Nous|V:allons|à|la|plage|.", "aller", ["aller", "allons", "allé"])
       ];
     }
+    function bankPresent() {
+      const c = (p, a, opts) => ch(p, a, opts, { ask: "Conjugue le verbe au présent." });
+      const t = (p, a) => ch(p, a, ["e", "es", "ons", "ez", "ent"], { ask: "Choisis la bonne terminaison.", keep: true, say: p.replace("___", "") });
+      const r = (v, a, opts) => ch(v, a, opts, { ask: "Quel est le radical de ce verbe ?" });
+      return [
+        c("Tu ___ (nager) à la piscine.", "nages", ["nage", "nages", "nagez", "nagent"]),
+        c("Vous ___ (visiter) le musée.", "visitez", ["visite", "visitons", "visitez", "visitent"]),
+        c("Je ___ (manger) une tartine.", "mange", ["mange", "manges", "mangez", "mangent"]),
+        c("Elles ___ (jouer) au football.", "jouent", ["joue", "joues", "jouez", "jouent"]),
+        c("Julien et Tom ___ (sauter) à la corde.", "sautent", ["saute", "sautes", "sautons", "sautent"]),
+        c("Nous ___ (chanter) une chanson.", "chantons", ["chante", "chantons", "chantez", "chantent"]),
+        c("Il ___ (regarder) la télévision.", "regarde", ["regarde", "regardes", "regardons", "regardent"]),
+        c("Tu ___ (danser) avec Léa.", "danses", ["danse", "danses", "dansez", "dansent"]),
+        c("Nous ___ (dessiner) un château.", "dessinons", ["dessine", "dessinons", "dessinez", "dessinent"]),
+        c("Elle ___ (parler) à sa maman.", "parle", ["parle", "parles", "parlez", "parlent"]),
+        c("Ils ___ (marcher) dans la forêt.", "marchent", ["marche", "marches", "marchons", "marchent"]),
+        c("Vous ___ (aimer) les fraises.", "aimez", ["aime", "aimons", "aimez", "aiment"]),
+        c("Je ___ (sauter) très haut.", "saute", ["saute", "sautes", "sautons", "sautent"]),
+        t("Nous saut___", "ons"), t("Tu saut___", "es"), t("Ils saut___", "ent"), t("Vous saut___", "ez"), t("Je saut___", "e"),
+        r("sauter", "saut", ["saut", "sau", "sauter"]), r("jouer", "jou", ["jou", "jo", "jouer"]), r("chanter", "chant", ["chant", "chan", "chanter"]),
+        ch("Au présent, le verbe exprime une action…", "que l’on fait au moment où on parle", ["que l’on fait au moment où on parle", "qui s’est passée hier", "qui se passera demain"], { ask: "Choisis la bonne réponse." })
+      ];
+    }
     function bankL17() {
       const I = "Trouve l’intrus : le mot qui n’est pas de la même famille.";
       const i = (words, odd) => ch("", odd, words, { ask: I, keep: false });
@@ -862,7 +897,7 @@
       ];
     }
     const BANKS = { l1: bankL1, l2: bankL2, l3: bankL3, l4: bankL4, l5: bankL5, l6: bankL6, l7: bankL7, l8: bankL8, l9: bankL9,
-      l10: bankL10, l11: bankL11, l12: bankL12, l13: bankL13, l14: bankL14, l15: bankL15, l16: bankL16, l17: bankL17 };
+      l10: bankL10, l11: bankL11, l12: bankL12, l13: bankL13, l14: bankL14, l15: bankL15, l16: bankL16, present: bankPresent, l17: bankL17 };
     const ROUND = 8;
 
     /* =====================================================================
@@ -977,7 +1012,7 @@
       const root = el("div", "lesson-text");
       const units = [];
       const h = el("h2");
-      h.textContent = `${lesson.n} – ${lesson.title}`;
+      h.textContent = /^\d+$/.test(lesson.n) ? `${lesson.n} – ${lesson.title}` : lesson.title;
       root.append(h);
       units.push({ node: h, say: lesson.title });
       lesson.text.forEach((item) => {
@@ -1217,7 +1252,7 @@
       if (q.prompt && /_{3}/.test(q.prompt)) {
         const v = fillText(st);
         return q.prompt.replace(/\s?_{3}/, (m) => (v === "" ? "" : m.startsWith(" ") ? " " + v : v))
-          .replace(/\s+([.,])/g, "$1").replace(/\s*\([^)]*\)\s*$/, "");
+          .replace(/\s*\([^)]*\)/g, "").replace(/\s+([.,])/g, "$1");
       }
       if (q.ul && chunks.length) {
         const c = chunks.find((x) => x.k === q.ul);
@@ -1410,7 +1445,7 @@
       if (prev == null || score > prev) { best[lesson.id] = score; saveBest(best); }
       const stars = starsFor(score);
       $("trophy").textContent = score === round.length ? "🏆" : stars >= 2 ? "🌟" : stars === 1 ? "💪" : "📖";
-      $("endLesson").textContent = `Leçon ${lesson.n} · ${lesson.title}`;
+      $("endLesson").textContent = /^\d+$/.test(lesson.n) ? `Leçon ${lesson.n} · ${lesson.title}` : lesson.title;
       $("endScore").textContent = `${score} / ${round.length}` + (score === round.length ? " — parfait !" : "");
       $("endStars").innerHTML = starHTML(stars);
       const list = $("mistakeList");
@@ -1443,7 +1478,7 @@
       const date = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
       const sheet = el("div", "sheet");
       const head = el("div", "sheet-head");
-      head.append(el("div", "sheet-title", "Mes corrections ✏️"), el("div", "sheet-meta", `Français · Leçon ${lesson.n} : ${lesson.title} · ${date}`));
+      head.append(el("div", "sheet-title", "Mes corrections ✏️"), el("div", "sheet-meta", `Français · ${/^\d+$/.test(lesson.n) ? "Leçon " + lesson.n + " : " : ""}${lesson.title} · ${date}`));
       const box = el("div", "sheet-lesson");
       box.append(renderLesson(lesson, { static: true }).root);
       const table = el("table", "sheet-table");

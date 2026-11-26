@@ -323,6 +323,12 @@
     /* compact group chips so eight groups still leave the start button on screen */
     .group-toggle { gap: 4px; padding: 5px; margin-bottom: 14px; }
     .group-toggle .mode-option { padding: 6px 10px; min-height: 36px; font-size: .88rem; }
+    .group-toggle .gs { display: none; }
+    @media (max-width: 440px) {
+      .group-toggle .gl { display: none; }
+      .group-toggle .gs { display: inline; }
+      .group-toggle .mode-option { padding: 6px 8px; }
+    }
     .secondary:disabled { opacity: .4; cursor: default; }
 
     @keyframes cardArrives { from { opacity: 0; transform: translateY(20px) rotate(-4deg) scale(.9); } }
@@ -500,8 +506,9 @@
             <button class="mode-option" data-group="e" type="button">[e]</button>
             <button class="mode-option" data-group="ai" type="button">[ɛ]</button>
             <button class="mode-option" data-group="temps" type="button">[présent · passé · futur]</button>
-            <button class="mode-option" data-group="invA" type="button">[invariables 1–6]</button>
-            <button class="mode-option" data-group="invB" type="button">[invariables 7–12]</button>
+            <button class="mode-option" data-group="invA" type="button">[<span class="gl">invariables</span><span class="gs">inv.</span> 1–6]</button>
+            <button class="mode-option" data-group="invB" type="button">[<span class="gl">invariables</span><span class="gs">inv.</span> 7–12]</button>
+            <button class="mode-option" data-group="invC" type="button">[<span class="gl">invariables</span><span class="gs">inv.</span> 13–14]</button>
           </div>
           <div id="modeToggleWrap">
             <p class="mode-label">Comment veux-tu réviser&nbsp;?</p>
@@ -630,15 +637,18 @@
     const WORDS_INV10 = ["combien", "beaucoup", "peu", "assez", "plus", "moins", "autant"];
     const WORDS_INV11 = ["chez", "loin", "près", "auprès", "partout", "moins"];
     const WORDS_INV12 = ["sur", "dessus", "sous", "au-dessus", "au-dessous", "devant"];
+    const WORDS_INV13 = ["derrière", "presque", "ici", "surtout", "comment", "dont"];
+    const WORDS_INV14 = ["trop", "sans", "très", "alors", "afin", "sitôt"];
 
     // combined lists; "toujours" is in both Série 1 and Série 2, so it is kept once
     const WORDS_TEMPS = [...WORDS_PRESENT, ...WORDS_PASSE, ...WORDS_FUTUR];
     // invariables split in two lists: Séries 1–6 and Séries 7–12 (a word repeated inside a list is kept once)
     const WORDS_INV_A = [...new Set([...WORDS_INV1, ...WORDS_INV2, ...WORDS_INV3, ...WORDS_INV4, ...WORDS_INV5, ...WORDS_INV6])];
     const WORDS_INV_B = [...new Set([...WORDS_INV7, ...WORDS_INV8, ...WORDS_INV9, ...WORDS_INV10, ...WORDS_INV11, ...WORDS_INV12])];
+    const WORDS_INV_C = [...new Set([...WORDS_INV13, ...WORDS_INV14])];
 
-    const GROUPS = { o: WORDS_O, e: WORDS_E, ai: WORDS_AI, temps: WORDS_TEMPS, invA: WORDS_INV_A, invB: WORDS_INV_B };
-    const GROUP_LABELS = { o: "[o]", e: "[e]", ai: "[ɛ]", temps: "[présent · passé · futur]", invA: "[invariables 1–6]", invB: "[invariables 7–12]" };
+    const GROUPS = { o: WORDS_O, e: WORDS_E, ai: WORDS_AI, temps: WORDS_TEMPS, invA: WORDS_INV_A, invB: WORDS_INV_B, invC: WORDS_INV_C };
+    const GROUP_LABELS = { o: "[o]", e: "[e]", ai: "[ɛ]", temps: "[présent · passé · futur]", invA: "[invariables 1–6]", invB: "[invariables 7–12]", invC: "[invariables 13–14]" };
     // a device last left on one of the old separate lists opens on the matching combined list
     const OLD_GROUPS = { present: "temps", passe: "temps", futur: "temps", inv: "invA", inv1: "invA", inv2: "invA", inv3: "invA" };
 
